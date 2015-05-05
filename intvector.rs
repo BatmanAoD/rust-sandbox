@@ -1,5 +1,7 @@
 // A simple vector-like structure for ints, implemented as a linked-list of arrays
 
+use std::ops::{Index, IndexMut};
+
 // Data
 
 struct Node
