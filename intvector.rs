@@ -1,3 +1,5 @@
+// A simple vector-like structure for ints, implemented as a linked-list of arrays
+
 // Data
 
 struct Node
