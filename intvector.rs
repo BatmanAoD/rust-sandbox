@@ -18,11 +18,20 @@ pub struct IntVector
 
 // Requests
 
-impl std::ops::IndexMut<i32> for Node
+impl std::ops::IndexMut<usize> for Node
 {
-    fn index_mut(&'a mut self, index: i32) -> &'a mut i32
+    fn index_mut<'a>(&'a mut self, index: usize) -> &mut i32
     {
-        self.data_seg_[index]
+        &mut self.data_seg_[index]
+    }
+}
+
+impl std::ops::Index<usize> for Node
+{
+    type Output = i32;
+    fn index<'a>(&'a self, index: usize) -> &i32
+    {
+        & self.data_seg_[index]
     }
 }
 
