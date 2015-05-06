@@ -6,6 +6,8 @@ use std::ops::{Index, IndexMut};
 
 struct Node
 {
+    // In the original "Belle" implementation, this is a Box (to demonstrate the syntax of boxed
+    // arrays), but that is unnecessary.
     data_seg_: [i32; 64],
     next_: Option<Box<Node>>,
     // TODO use an iterator rather than raw size value?
@@ -15,9 +17,13 @@ struct Node
 pub struct IntVector
 {
     head_: Box<Node>,
+    // User iterators instead?
+    first_: usize,
+    last_: usize,
+    size_: usize,
 }
 
-// Requests
+// Node Requests
 
 impl std::ops::IndexMut<usize> for Node
 {
@@ -38,8 +44,6 @@ impl std::ops::Index<usize> for Node
 
 impl Node
 {
-// Provide access to `next_` via a fxn?
-
     fn new() -> Node
     {
         Node {
@@ -61,10 +65,52 @@ impl Node
         self.size_ += 1;
     }
 
-    fn init_next(&mut self)
+    fn initNext(&mut self)
     {
         self.next_ = Some(Box::new(Node::new()));
     }
 
+    fn isFull(&self) -> bool
+    {
+        self.size_ == 64
+    }
+
+    // Provide access to `next_` via a fxn?
 }
 
+
+// IntVector Requests
+
+impl std::ops::IndexMut<usize> for IntVector
+{
+    fn index_mut<'a>(&'a mut self, index: usize) -> &mut i32
+    {
+        let seg_no = (index - self.start_) / 64;
+        let index = (index - self.start_) % 64;
+        let containing_seg = self.traverse(
+            |seg| ! seg.isFull,
+            |seg| if (seg.next.is_none()) {seg.initNext;}
+        );
+
+        &mut self.containing_seg[index]
+    }
+}
+
+impl std::ops::Index<usize> for IntVector
+{
+    type Output = i32;
+    fn index<'a>(&'a self, index: usize) -> &i32
+    {
+        & self.data_seg_[index]
+    }
+}
+
+impl IntVector
+{
+    fn traverse<'a>(&'a mut self, cond: Fn, op: Fn) -> &'a mut Node
+    {
+        let seg_iter = self.head_;
+        // XXX TODO perform iteration
+        seg_iter
+    }
+}
