@@ -8,7 +8,8 @@ struct Node
 {
     data_seg_: [i32; 64],
     next_: Option<Box<Node>>,
-    size_: i32,
+    // TODO use an iterator rather than raw size value?
+    size_: usize,
 }
 
 pub struct IntVector
@@ -37,5 +38,33 @@ impl std::ops::Index<usize> for Node
 
 impl Node
 {
+// Provide access to `next_` via a fxn?
+
+    fn new() -> Node
+    {
+        Node {
+            // Possible ot leave this uninitialized? There's no reason to 0-out the elements that
+            // aren't yet "active".
+            data_seg_: [0; 64],
+            next_: None,
+            size_: 0
+        }
+    }
+
+
+    // This fxn is only called if Node's segment is NOT full
+    fn append(&mut self, n: i32)
+    {
+        // TODO Is it possible to do this without introducing a new binding?
+        let new_index = self.size_;
+        self[new_index] = n;
+        self.size_ += 1;
+    }
+
+    fn init_next(&mut self)
+    {
+        self.next_ = Some(Box::new(Node::new()));
+    }
+
 }
 
