@@ -4,19 +4,19 @@ struct Node {
 }
 
 impl Node {
-    fn new(initial_data: [u8]) -> Box<Node> {
-        Box::new(Node {
+    fn new(initial_data: &[u8]) -> Box<Node> {
+        // Turns out I don't know how to create new DST's.
+        // See: http://stackoverflow.com/a/25753422/1858225
+        let mut head = Box::new(Node {
             next: None,
-            data: initial_data
-        })
+            data: [0; initial_data.len()]
+        });
+        head.data.copy_from_slice(initial_data);
     }
 
-    fn add(&mut self, new_data: [u8]) {
+    fn add(&mut self, new_data: &[u8]) {
         if let Some(_) = self.next { unimplemented!(); }
-        self.next = Some(Box::new(Node {
-            next: None,
-            data: new_data
-        }));
+        self.next = new(new_data);
     }
 }
 
